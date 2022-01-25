@@ -63,5 +63,7 @@ build/
 ### VS Code ###
 .vscode/
 
-mvnw*
+mvn*
+.mvn
+.jpb
 resources
