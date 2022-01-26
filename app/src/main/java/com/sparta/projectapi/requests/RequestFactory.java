@@ -1,6 +1,8 @@
 package com.sparta.projectapi.requests;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,9 +17,9 @@ public class RequestFactory {
     private static ObjectMapper mapper = new ObjectMapper();
     private static String jsonFilePath = "src/test/java/com/sparta/projectapi/json/";
 
-    private static HttpResponse<String> responseBuilder(String endpoint, Integer id, String token, String requestType, String jsonEndPoint)
+    private static HttpResponse<String> responseBuilder(String endpoint, Integer id, String username,String token, String requestType, String jsonEndPoint)
             throws IOException, InterruptedException, URISyntaxException {
-        StringBuilder url = new StringBuilder("http://localhost:80");
+        StringBuilder url = new StringBuilder("http://localhost");
         url.append(endpoint);
         if (id != null) {
             url.append("?id="+id);
@@ -25,7 +27,6 @@ public class RequestFactory {
         HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .uri(new URI(url.toString()));
-
 
         if (requestType.equals("GET")) {
             builder = builder.GET();
@@ -42,8 +43,7 @@ public class RequestFactory {
 
         HttpRequest req = builder
                 .header("content-type", "application/json")
-                //  I needed to compile, uncomment if you need it.
-                // .header("Authorization", "Basic " + username + " " + token)
+                 .header("Authorization", "Basic " + username + " " + token)
                 .build();
 
         HttpClient client = HttpClient.newHttpClient();
@@ -51,6 +51,17 @@ public class RequestFactory {
                 HttpResponse.BodyHandlers.ofString());
 
         return resp;
+    }
+
+    private static String loginMapper(HttpResponse<String> resp) throws JsonProcessingException {
+        String map = mapper.readValue(resp.body(), String.class);
+        return map;
+    }
+
+    public static String postLogin(String username,String token) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/login/check", null, username, token, "POST",
+                "user.json");
+        return loginMapper(resp);
     }
 
 }
