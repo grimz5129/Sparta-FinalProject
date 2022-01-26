@@ -2,15 +2,14 @@ package com.sparta.projectapi.controllers;
 
 import com.sparta.projectapi.entities.Login;
 import com.sparta.projectapi.repositories.LoginRepository;
+import com.sparta.projectapi.services.AuthorizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @RestController
@@ -18,6 +17,9 @@ public class LoginController {
 
     @Autowired
     LoginRepository loginRepository;
+    @Autowired
+    AuthorizationService authorizationService;
+    private static final String validCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     @PostMapping("/login/check")
     public ResponseEntity<String> checkLogin(@RequestBody Login loginToCheck){
@@ -34,6 +36,7 @@ public class LoginController {
             if (!loginRepository.existsByUsername(newLogin.getUsername())) {
                 if (validatePassword(newLogin.getPassword())) {
                     newLogin.setPassword(BCrypt.hashpw(newLogin.getPassword(), BCrypt.gensalt()));
+                    newLogin.setCurrentToken(generateNewToken());
                     loginRepository.save(newLogin);
                     return new ResponseEntity<>("Login details added successfully", HttpStatus.CREATED);
                 } else
@@ -43,8 +46,8 @@ public class LoginController {
     }
 
     @DeleteMapping("/login/delete")
-    public ResponseEntity<String> deleteLogin(@RequestBody Login loginToDelete){
-        if (loginRepository.existsByUsername(loginToDelete.getUsername())){
+    public ResponseEntity<String> deleteLogin(@RequestBody Login loginToDelete, @RequestHeader("Authorization") String authToken){
+        if (authorizationService.checkValidToken(loginToDelete.getUsername(), authToken.split(" ")[1])){
             if (BCrypt.checkpw(loginToDelete.getPassword(), loginRepository.getByUsername(loginToDelete.getUsername()).getPassword())){
                 loginRepository.delete(loginToDelete);
                 return new ResponseEntity<>("Login data cleared for user.", HttpStatus.GONE);
@@ -61,5 +64,14 @@ public class LoginController {
 
     private boolean validatePassword(String password){
         return password.length() >= 8 && Pattern.matches("(.)*(\\d)*(.)*", password) && Pattern.matches("(.)*([A-Z])*(.)*", password) && Pattern.matches("(.)*([^\\w])*(.)*", password);
+    }
+
+    private String generateNewToken(){
+        StringBuilder newToken = new StringBuilder();
+        Random r = new Random();
+        for (int i = 0 ; i < 40; i++){
+            newToken.append(validCharset.charAt(r.nextInt(validCharset.length())));
+        }
+        return newToken.toString();
     }
 }
