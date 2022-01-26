@@ -46,8 +46,8 @@ public class LoginController {
     }
 
     @DeleteMapping("/login/delete")
-    public ResponseEntity<String> deleteLogin(@RequestBody Login loginToDelete, @RequestHeader("Authorization") String authToken){
-        if (authorizationService.checkValidToken(loginToDelete.getUsername(), authToken.split(" ")[1])){
+    public ResponseEntity<String> deleteLogin(@RequestBody Login loginToDelete, @RequestHeader("Authorization") String usernameAndAuthToken){
+        if (authorizationService.checkValidToken(usernameAndAuthToken.split(" ")[1], usernameAndAuthToken.split(" ")[2])){
             if (BCrypt.checkpw(loginToDelete.getPassword(), loginRepository.getByUsername(loginToDelete.getUsername()).getPassword())){
                 loginRepository.delete(loginToDelete);
                 return new ResponseEntity<>("Login data cleared for user.", HttpStatus.GONE);
