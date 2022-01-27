@@ -18,7 +18,7 @@ public class Item {
 
     @ManyToOne
     @JoinColumn(name = "item_type")
-    private Itemtype itemType;
+    private ItemType itemType;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -32,11 +32,11 @@ public class Item {
         this.user = user;
     }
 
-    public Itemtype getItemType() {
+    public ItemType getItemType() {
         return itemType;
     }
 
-    public void setItemType(Itemtype itemType) {
+    public void setItemType(ItemType itemType) {
         this.itemType = itemType;
     }
 

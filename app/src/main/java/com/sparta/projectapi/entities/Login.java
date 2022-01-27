@@ -23,6 +23,17 @@ public class Login {
     @Column(name = "password")
     private String password;
 
+    @Column(name = "current_token", length = 40)
+    private String currentToken;
+
+    public String getCurrentToken() {
+        return currentToken;
+    }
+
+    public void setCurrentToken(String currentToken) {
+        this.currentToken = currentToken;
+    }
+
     public String getPassword() {
         return password;
     }

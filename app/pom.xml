@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.sparta</groupId>
-    <artifactId>ProjectAPI</artifactId>
+    <artifactId>Sparta-FinalProject</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ProjectAPI</name>
-    <description>ProjectAPI</description>
+    <name>Sparta-FinalProject</name>
+    <description>Sparta-FinalProject</description>
     <properties>
         <java.version>17</java.version>
     </properties>
