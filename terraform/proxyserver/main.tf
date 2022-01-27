@@ -140,6 +140,8 @@ resource "aws_instance" "java10x_userpackages_group4_server_proxy_tf" {
   vpc_security_group_ids = [aws_security_group.java10x_userpackages_group4_sg_proxy_tf.id]
   associate_public_ip_address = true
 
+  depends_on = [var.var_webserver_id_tf]
+
   #creating ssh connection
    connection {
      type = "ssh"

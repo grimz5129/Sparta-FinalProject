@@ -41,6 +41,7 @@ module "webserver_module" {
   var_zone_id_tf = aws_route53_zone.java10x_userpackages_group4_r53_zone_tf.id
   var_private_key_location_tf = var.var_private_key_location_tf
   var_vpc_id_tf = aws_vpc.java10x_userpackages_group4_vpc_tf.id
+  var_database_id = module.databaseserver_module.output_server_database_tf_id
 }
 
 ##################################
@@ -78,7 +79,7 @@ module "proxyserver_module" {
 
   var_rt_public_id_tf = module.webserver_module.output_userpackages_rt_public_id_tf
   var_vpc_id_tf = aws_vpc.java10x_userpackages_group4_vpc_tf.id
-
+  var_webserver_id_tf = module.webserver_module.output_webserver_tf_id
   var_ami_linux_ubuntu_tf = var.var_ami_linux_ubuntu_tf
   var_zone_id_tf = aws_route53_zone.java10x_userpackages_group4_r53_zone_tf.id
   var_private_key_location_tf = var.var_private_key_location_tf

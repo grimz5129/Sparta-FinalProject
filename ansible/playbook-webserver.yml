@@ -43,23 +43,20 @@
 
     - name: Copy a file to the destination
       copy:
-        src: "{{ playbook_dir }}/../init-scripts/application.properties" # this path needs to be changed
+        src: "{{ playbook_dir }}/../init-scripts/application.properties"
         dest: /home/ubuntu
         owner: ubuntu
         group: ubuntu
         mode: 0744
 
-    # - name: Run Hello container
-    #    docker_container:
-    #      name: aws-testing
-    #      image: # image goes here
-    #      state: started
-    #      container_default_behavior: compatibility
 
     - name: Run docker container
       docker_container:
-        name: Running docker container
-        image: sakilarestapi2
-        publish_ports: 8080:8080
+        name: appcontainer
+        image: "grimz5129/sakilarestapi2:latest"
+        published_ports:
+          - "8080:8080"
+        volumes:
+          - "/home/ubuntu/application.properties:/application.properties"
         state: started
         container_default_behavior: compatibility
