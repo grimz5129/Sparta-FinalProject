@@ -4,6 +4,7 @@ import com.sparta.projectapi.entities.Login;
 import com.sparta.projectapi.repositories.LoginRepository;
 import com.sparta.projectapi.repositories.UserRepository;
 import com.sparta.projectapi.services.AuthorizationService;
+import com.sparta.projectapi.services.RegexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,8 @@ public class LoginController {
     AuthorizationService authorizationService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RegexService regexService;
     private static final String validCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
     @PostMapping("/login/check")
@@ -38,14 +41,7 @@ public class LoginController {
 
     @PostMapping("/login/register")
     public ResponseEntity<String> registerLogin(@RequestBody String newLoginString){
-        System.out.println(newLoginString);
-        newLoginString = newLoginString.replaceAll("[^a-zA-Z0-9:,]", "");
-        System.out.println(newLoginString);
-        String[] bits = newLoginString.split(",");
-        Map<String, String> values = new HashMap<>();
-        for (String bit : bits) {
-            values.put(bit.split(":")[0], bit.split(":")[1]);
-        }
+        Map<String, String> values = regexService.parseProperties(newLoginString);
         if (userRepository.existsById(Integer.valueOf(values.get("id")))) {
             Login newLogin = new Login(userRepository.getById(Integer.valueOf(values.get("id"))), values.get("username"), values.get("password"));
             if (validateUsername(newLogin.getUsername())) {
