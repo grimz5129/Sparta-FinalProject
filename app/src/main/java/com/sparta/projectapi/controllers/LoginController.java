@@ -35,7 +35,7 @@ public class LoginController {
 
     @PostMapping("/login/register")
     public ResponseEntity<String> registerLogin(@RequestBody Login newLogin){
-        if (userRepository.existsById(newLogin.getId())) {
+        if (userRepository.existsById(newLogin.getUser().getId())) {
             if (validateUsername(newLogin.getUsername())) {
                 if (!loginRepository.existsByUsername(newLogin.getUsername())) {
                     if (validatePassword(newLogin.getPassword())) {
