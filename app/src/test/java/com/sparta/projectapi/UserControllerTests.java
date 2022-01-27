@@ -15,14 +15,6 @@ public class UserControllerTests {
     private static String createUserResponse;
     private static String deleteUserResponse;
 
-//    @BeforeAll
-//    public static void trackRequests() throws IOException, InterruptedException, URISyntaxException {
-//        createUserResponse = RequestFactory.postUser();
-////        postAlbum= RequestFactory.createAlbumRequest("WMaFkaH5nPPUwyVZDAzq");
-////        deleteAlbum = RequestFactory.deleteAlbum(235, "WMaFkaH5nPPUwyVZDAzq");
-////        deleteAlbum2 = RequestFactory.deleteAlbum(postAlbum.getId(), "WMaFkaH5nPPUwyVZDAzq");
-////        updateAlbum = RequestFactory.updateAlbum("WMaFkaH5nPPUwyVZDAzq");
-//    }
 
     @Test
     @DisplayName("GET valid user response")
