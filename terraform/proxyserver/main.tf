@@ -148,29 +148,7 @@ resource "aws_instance" "java10x_userpackages_group4_server_proxy_tf" {
      #private key location
      private_key = file(var.var_private_key_location_tf)
    }
-   /*
-   provisioner "file" {
-     source = "./init-scripts/cert_files"
-     destination = "/home/ubuntu/cert_files"
-   }
 
-   provisioner "file" {
-     source = "./init-scripts/nginx-install.sh"
-     destination = "/home/ubuntu/nginx-install.sh"
-   }
-
-   provisioner "file" {
-     source = "./init-scripts/default"
-     destination = "/home/ubuntu/default"
-   }
-
-   provisioner "remote-exec" {
-     inline = [
-       "chmod 744 /home/ubuntu/nginx-install.sh",
-       "/home/ubuntu/nginx-install.sh",
-     ]
-   }
-   */
 
    provisioner "remote-exec" {
      inline = [
@@ -179,9 +157,9 @@ resource "aws_instance" "java10x_userpackages_group4_server_proxy_tf" {
    }
 
    provisioner "local-exec" {
-     working_dir = "./ansible"
+     working_dir = "../ansible"
      environment = {
-       ANSIBLE_CONFIG = "${abspath(path.root)}/ansible"
+       ANSIBLE_CONFIG = "${abspath(path.root)}/../ansible"
      }
      command = "ansible-playbook -i ${self.public_ip}, -u ubuntu playbook-nginx.yml"
    }
