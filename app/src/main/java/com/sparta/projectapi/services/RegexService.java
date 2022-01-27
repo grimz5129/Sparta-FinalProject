@@ -7,7 +7,7 @@ import java.util.Map;
 
 @Service
 public class RegexService {
-    public Map<String, String> parseProperties(String bodyString){
+    public Map<String, String> parseProperties(String bodyString) {
         bodyString = bodyString.replaceAll("[^a-zA-Z0-9:,_]", "");
         String[] bits = bodyString.split(",");
         Map<String, String> values = new HashMap<>();

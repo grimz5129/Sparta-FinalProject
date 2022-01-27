@@ -1,6 +1,5 @@
 package com.sparta.projectapi.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
@@ -25,6 +24,15 @@ public class List {
     @ManyToOne(optional = false)
     @JoinColumn(name = "belongs_to_user", nullable = false)
     private User belongsToUser;
+
+    public List(String listTitle, String listDescription, User belongsToUser) {
+        this.listTitle = listTitle;
+        this.listDescription = listDescription;
+        this.belongsToUser = belongsToUser;
+    }
+
+    public List() {
+    }
 
     public User getBelongsToUser() {
         return belongsToUser;
@@ -66,14 +74,5 @@ public class List {
                 ", listDescription='" + listDescription + '\'' +
                 ", belongsToUser=" + belongsToUser +
                 '}';
-    }
-
-    public List(String listTitle, String listDescription, User belongsToUser) {
-        this.listTitle = listTitle;
-        this.listDescription = listDescription;
-        this.belongsToUser = belongsToUser;
-    }
-
-    public List() {
     }
 }

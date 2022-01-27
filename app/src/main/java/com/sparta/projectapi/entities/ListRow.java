@@ -21,6 +21,14 @@ public class ListRow {
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    public ListRow(List list, Item item) {
+        this.list = list;
+        this.item = item;
+    }
+
+    public ListRow() {
+    }
+
     public Item getItem() {
         return item;
     }
@@ -43,13 +51,5 @@ public class ListRow {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public ListRow(List list, Item item) {
-        this.list = list;
-        this.item = item;
-    }
-
-    public ListRow() {
     }
 }

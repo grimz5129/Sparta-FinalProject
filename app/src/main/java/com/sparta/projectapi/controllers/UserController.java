@@ -20,19 +20,20 @@ public class UserController {
     LoginRepository loginRepository;
 
     @PostMapping("/user/create")
-    public ResponseEntity<String> createNewUser(@RequestBody User newUser){
+    public ResponseEntity<String> createNewUser(@RequestBody User newUser) {
         userRepository.save(newUser);
         return new ResponseEntity<>("New User was created. Register a login before using the services", HttpStatus.CREATED);
     }
 
     @DeleteMapping("/user/delete/{id}")
-    public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable int id){
+    public ResponseEntity<String> deleteUser(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable int id) {
         String[] headerParts = usernameAndAuthToken.split(" ");
         if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
             userRepository.deleteById(id);
             loginRepository.deleteById(id);
             return new ResponseEntity<>("User and credentials have been deleted", HttpStatus.OK);
-        } else return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
+        } else
+            return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
     }
 }
 

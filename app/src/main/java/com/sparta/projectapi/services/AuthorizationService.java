@@ -10,8 +10,8 @@ public class AuthorizationService {
     @Autowired
     LoginRepository loginRepository;
 
-    public boolean checkValidToken(String username, String authToken){
-        if (loginRepository.existsByUsername(username)){
+    public boolean checkValidToken(String username, String authToken) {
+        if (loginRepository.existsByUsername(username)) {
             return loginRepository.getByUsername(username).getCurrentToken().equals(authToken);
         }
         return false;
