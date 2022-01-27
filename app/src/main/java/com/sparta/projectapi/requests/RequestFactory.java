@@ -59,8 +59,8 @@ public class RequestFactory {
         return resp.body();
     }
 
-    public static String deleteUser(Integer id) throws IOException, InterruptedException, URISyntaxException {
-        HttpResponse<String> resp = responseBuilder("/user/delete/" + id, null, null, "DELETE",
+    public static String deleteUser(Integer id, String username, String token) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/user/delete/" + id, username, token, "DELETE",
                 null);
         return resp.body();
     }
