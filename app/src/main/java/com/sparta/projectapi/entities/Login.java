@@ -65,4 +65,13 @@ public class Login {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public Login(User user, String username, String password) {
+        this.user = user;
+        this.username = username;
+        this.password = password;
+    }
+
+    public Login() {
+    }
 }

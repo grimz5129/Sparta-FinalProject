@@ -10,6 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -34,8 +37,17 @@ public class LoginController {
     }
 
     @PostMapping("/login/register")
-    public ResponseEntity<String> registerLogin(@RequestBody Login newLogin){
-        if (userRepository.existsById(newLogin.getUser().getId())) {
+    public ResponseEntity<String> registerLogin(@RequestBody String newLoginString){
+        System.out.println(newLoginString);
+        newLoginString = newLoginString.replaceAll("[^a-zA-Z0-9:,]", "");
+        System.out.println(newLoginString);
+        String[] bits = newLoginString.split(",");
+        Map<String, String> values = new HashMap<>();
+        for (String bit : bits) {
+            values.put(bit.split(":")[0], bit.split(":")[1]);
+        }
+        if (userRepository.existsById(Integer.valueOf(values.get("id")))) {
+            Login newLogin = new Login(userRepository.getById(Integer.valueOf(values.get("id"))), values.get("username"), values.get("password"));
             if (validateUsername(newLogin.getUsername())) {
                 if (!loginRepository.existsByUsername(newLogin.getUsername())) {
                     if (validatePassword(newLogin.getPassword())) {
