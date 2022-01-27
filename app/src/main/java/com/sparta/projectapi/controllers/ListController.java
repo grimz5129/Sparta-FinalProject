@@ -106,21 +106,15 @@ public class ListController {
     }
 
     @DeleteMapping("/list/delete/fromlist/{id}")
-    public ResponseEntity<String> deleteItemsFromList(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable Integer id, @RequestBody String itemsToDelete){
+    public ResponseEntity<String> deleteItemsFromList(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable Integer id, @RequestBody String itemsToDelete) {
         String[] headerParts = usernameAndAuthToken.split(" ");
         String[] itemList = itemsToDelete.split("},");
         if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
             java.util.List<ListRow> listRowObjects = new ArrayList<>(itemList.length);
-            for (String item : itemList) {
-                Map<String, String> values = regexService.parseProperties(item);
-                if (listRowRepository.existsByItem(itemRepository.getById(Integer.valueOf(values.get("id"))))){
-                    listRowObjects.add(listRowRepository.getByItem(itemRepository.getById(Integer.valueOf(values.get("id")))));
-                } else
-                    return new ResponseEntity<>("List row for item with id: " + id + " was notn ")
-            }
-        }
-    } else
+            return new ResponseEntity<>("You are at the cutting edge of ddev", HttpStatus.I_AM_A_TEAPOT);
+        } else
             return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
+    }
 
 
     private java.util.List<Map<String, String>> buildOutputMapList(java.util.List<ListRow> rowList) {
