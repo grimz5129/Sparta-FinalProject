@@ -27,13 +27,13 @@
         group: ubuntu
         mode: 0744
 
-    - name: Copy a file to the destination
+    - name: Copy cert files to the destination
       copy:
         src: "{{ playbook_dir }}/../init-scripts/cert_files"
         dest: /home/ubuntu
         owner: ubuntu
         group: ubuntu
-        mode: 0744
+        mode: 0400
 
     - name: Move default to nginx location
       shell: mv /home/ubuntu/default /etc/nginx/sites-available/default

@@ -56,9 +56,10 @@
     #      state: started
     #      container_default_behavior: compatibility
 
-    - name: Run Hello container
+    - name: Run docker container
       docker_container:
-        name: hello-world-Test
-        image: hello-world
+        name: Running docker container
+        image: sakilarestapi2
+        publish_ports: 8080:8080
         state: started
         container_default_behavior: compatibility

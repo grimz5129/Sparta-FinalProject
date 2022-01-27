@@ -183,44 +183,7 @@ resource "aws_instance" "java10x_userpackages_group4_server_web_tf" {
     #private key location
     private_key = file(var.var_private_key_location_tf)
   }
-  /*
-  provisioner "file" {
-    source = "./init-scripts/docker-install.sh"
-    destination = "/home/ubuntu/docker-install.sh"
-  }
 
-  provisioner "remote-exec" {
-    inline = [
-      "chmod 744 /home/ubuntu/docker-install.sh",
-      "/home/ubuntu/docker-install.sh",
-    ]
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "docker run hello-world",
-    ]
-  }
-
-  provisioner "file" {
-    source = "./init-scripts/application.properties"
-    destination = "/home/ubuntu/application.properties"
-  }
-
-  provisioner "file" {
-    source = "./init-scripts/docker-run.sh"
-    destination = "/home/ubuntu/docker-run.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "chmod 744 /home/ubuntu/docker-run.sh",
-      "chmod 400 /home/ubuntu/application.properties",
-      "/home/ubuntu/docker-run.sh",
-    ]
-  }
-
-  */
 
   provisioner "remote-exec" {
     inline = [
@@ -229,11 +192,11 @@ resource "aws_instance" "java10x_userpackages_group4_server_web_tf" {
   }
 
   provisioner "local-exec" {
-    working_dir = "./ansible"
+    working_dir = "../ansible"
     environment = {
-      ANSIBLE_CONFIG = "${abspath(path.root)}/ansible"
+      ANSIBLE_CONFIG = "${abspath(path.root)}/../ansible"
     }
-    command = "ansible-playbook -i ${self.public_ip}, -u ubuntu playbook-webserver.yml"    
+    command = "ansible-playbook -i ${self.public_ip}, -u ubuntu playbook-webserver.yml"
   }
 
 
