@@ -87,7 +87,7 @@ resource "aws_security_group" "java10x_userpackages_group4_sg_bastion_tf" {
 
   egress {
     protocol = "tcp"
-    from_port = 442
+    from_port = 443
     to_port = 443
     cidr_blocks = ["0.0.0.0/0"]
   }

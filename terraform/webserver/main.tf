@@ -173,7 +173,8 @@ resource "aws_instance" "java10x_userpackages_group4_server_web_tf" {
   subnet_id = aws_subnet.java10x_userpackages_group4_subnet_public_tf.id
   vpc_security_group_ids = [aws_security_group.java10x_userpackages_group4_sg_web_tf.id]
   associate_public_ip_address = true
-  #depends_on = [aws_instance.java10x_userpackages_group4_server_database_tf]
+  count = 3
+  depends_on = [var.var_database_id]
 
   #creating ssh connection
   connection {
@@ -202,7 +203,7 @@ resource "aws_instance" "java10x_userpackages_group4_server_web_tf" {
 
 
   tags = {
-    Name = "java10x_userpackages_group4_server_web"
+    Name = "java10x_userpackages_group4_server_${count.index}"
   }
 }
 
@@ -212,5 +213,5 @@ resource "aws_route53_record" "java10x_userpackages_group4_r53_record_app_tf" {
     type = "A"
     ttl = "30"
 
-    records = [aws_instance.java10x_userpackages_group4_server_web_tf.public_ip]
+    records = aws_instance.java10x_userpackages_group4_server_web_tf.*.public_ip
 }

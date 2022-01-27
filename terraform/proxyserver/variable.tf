@@ -17,3 +17,7 @@ variable "var_private_key_location_tf" {
 variable "var_rt_public_id_tf" {
 
 }
+
+variable "var_webserver_id_tf" {
+
+}
