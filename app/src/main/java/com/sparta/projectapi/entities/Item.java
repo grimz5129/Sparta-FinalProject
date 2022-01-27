@@ -4,7 +4,6 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "items", indexes = {
-        @Index(name = "user_id", columnList = "user_id"),
         @Index(name = "item_type", columnList = "item_type")
 })
 public class Item {
@@ -20,25 +19,10 @@ public class Item {
     @JoinColumn(name = "item_type")
     private ItemType itemType;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    public Item(String itemName, ItemType itemType, User user) {
-        this.itemName = itemName;
-        this.itemType = itemType;
-        this.user = user;
+    public Item(String item_name, ItemType item_type) {
     }
 
     public Item() {
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 
     public ItemType getItemType() {
@@ -63,5 +47,13 @@ public class Item {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "itemName='" + itemName + '\'' +
+                ", itemType=" + itemType +
+                '}';
     }
 }

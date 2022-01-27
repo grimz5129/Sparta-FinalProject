@@ -3,7 +3,6 @@ package com.sparta.projectapi.controllers;
 import com.sparta.projectapi.entities.Item;
 import com.sparta.projectapi.entities.List;
 import com.sparta.projectapi.entities.ListRow;
-import com.sparta.projectapi.entities.User;
 import com.sparta.projectapi.repositories.*;
 import com.sparta.projectapi.services.AuthorizationService;
 import com.sparta.projectapi.services.RegexService;
@@ -56,18 +55,30 @@ public class ListController {
             java.util.List<Item> itemObjects = new ArrayList<>(itemList.length);
             for (String item : itemList) {
                 Map<String, String> values = regexService.parseProperties(item);
-                System.out.println(values.get("item_type"));
                 if (itemTypeRepository.existsByTypeName(values.get("item_type"))) {
-                    if (userRepository.existsById(Integer.valueOf(values.get("user_id")))) {
-                        itemObjects.add(new Item(values.get("item_name"), itemTypeRepository.getByTypeName(values.get("item_type")), userRepository.getById(Integer.valueOf(values.get("user_id")))));
-                    } else
-                        return new ResponseEntity<>("Cannot add items for the given user. Try again", HttpStatus.BAD_REQUEST);
+                    // I tried a constructor. It had random null references. This works. I have no idea why.
+                    Item newItem = new Item();
+                    newItem.setItemName(values.get("item_name"));
+                    newItem.setItemType(itemTypeRepository.getByTypeName(values.get("item_type")));
+                    itemObjects.add(newItem);
                 } else return new ResponseEntity<>("One or more items have invalid types", HttpStatus.BAD_REQUEST);
             }
-            itemRepository.saveAll(itemObjects);
+            java.util.List<Item> newItems = new ArrayList<>();
+            java.util.List<Item> itemObjectsForRows = new ArrayList<>();
+            for (Item item: itemObjects){
+                if (!itemRepository.existsByItemName(item.getItemName())){
+                    newItems.add(item);
+                    itemObjectsForRows.add(item);
+                } else {
+                    itemObjectsForRows.add(itemRepository.getByItemName(item.getItemName()));
+                }
+            }
+            if (newItems.size() > 0) {
+                itemRepository.saveAll(newItems);
+            }
             java.util.List<ListRow> listRows = new ArrayList<>(itemObjects.size());
             List addingToList = listRepository.getById(id);
-            for (Item item : itemObjects) {
+            for (Item item : itemObjectsForRows) {
                 listRows.add(new ListRow(addingToList, item));
             }
             listRowRepository.saveAll(listRows);
@@ -97,7 +108,6 @@ public class ListController {
                 java.util.List<ListRow> rowsOfList = listRowRepository.getAllByList(listRepository.getById(id));
                 listRowRepository.deleteAll(rowsOfList);
                 listRepository.deleteById(id);
-                // Potential change for assignment, to remove
                 return new ResponseEntity<>("List and all Rows deleted. ", HttpStatus.ACCEPTED);
             } else
                 return new ResponseEntity<>("The list with the specified ID: " + id + " was not found", HttpStatus.NOT_FOUND);
@@ -111,7 +121,18 @@ public class ListController {
         String[] itemList = itemsToDelete.split("},");
         if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
             java.util.List<ListRow> listRowObjects = new ArrayList<>(itemList.length);
-            return new ResponseEntity<>("You are at the cutting edge of ddev", HttpStatus.I_AM_A_TEAPOT);
+            for (String item : itemList) {
+                Map<String, String> values = regexService.parseProperties(item);
+                if (itemRepository.existsByItemName(values.get("item_name"))) {
+                    if (listRowRepository.existsByItem(itemRepository.getByItemName(values.get("item_name")))){
+                        listRowObjects.add(listRowRepository.getByItem(itemRepository.getByItemName(values.get("item_name"))));
+                    } else
+                        return new ResponseEntity<>("Item with name " + values.get("item_name") + " does not exist in list with ID: " + id, HttpStatus.NOT_FOUND);
+                } else
+                    return new ResponseEntity<>("One or more items specified do not exist", HttpStatus.BAD_REQUEST);
+            }
+            listRowRepository.deleteAll(listRowObjects);
+            return new ResponseEntity<>("All objects were deleted successfully", HttpStatus.OK);
         } else
             return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
     }
@@ -128,7 +149,6 @@ public class ListController {
         outMap.put("id", item.getId().toString());
         outMap.put("itemName", item.getItemName());
         outMap.put("itemType", item.getItemType().getTypeName());
-        outMap.put("user", item.getUser().getName());
         return outMap;
     }
 
