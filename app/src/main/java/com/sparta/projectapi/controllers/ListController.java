@@ -3,6 +3,7 @@ package com.sparta.projectapi.controllers;
 import com.sparta.projectapi.entities.Item;
 import com.sparta.projectapi.entities.List;
 import com.sparta.projectapi.entities.ListRow;
+import com.sparta.projectapi.entities.User;
 import com.sparta.projectapi.repositories.*;
 import com.sparta.projectapi.services.AuthorizationService;
 import com.sparta.projectapi.services.RegexService;
@@ -88,10 +89,39 @@ public class ListController {
             return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
     }
 
-    @DeleteMapping("/list/delete")
-    public ResponseEntity<String> deleteList() {
-        return new ResponseEntity<>("Dummy Message", HttpStatus.I_AM_A_TEAPOT);
+    @DeleteMapping("/list/delete/wholelist/{id}")
+    public ResponseEntity<String> deleteList(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable Integer id) {
+        String[] headerParts = usernameAndAuthToken.split(" ");
+        if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
+            if(listRepository.existsById(id)){
+                java.util.List<ListRow> rowsOfList = listRowRepository.getAllByList(listRepository.getById(id));
+                listRowRepository.deleteAll(rowsOfList);
+                listRepository.deleteById(id);
+                // Potential change for assignment, to remove
+                return new ResponseEntity<>("List and all Rows deleted. ", HttpStatus.ACCEPTED);
+            } else
+                return new ResponseEntity<>("The list with the specified ID: " + id + " was not found", HttpStatus.NOT_FOUND);
+        } else
+            return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
     }
+
+    @DeleteMapping("/list/delete/fromlist/{id}")
+    public ResponseEntity<String> deleteItemsFromList(@RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable Integer id, @RequestBody String itemsToDelete){
+        String[] headerParts = usernameAndAuthToken.split(" ");
+        String[] itemList = itemsToDelete.split("},");
+        if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
+            java.util.List<ListRow> listRowObjects = new ArrayList<>(itemList.length);
+            for (String item : itemList) {
+                Map<String, String> values = regexService.parseProperties(item);
+                if (listRowRepository.existsByItem(itemRepository.getById(Integer.valueOf(values.get("id"))))){
+                    listRowObjects.add(listRowRepository.getByItem(itemRepository.getById(Integer.valueOf(values.get("id")))));
+                } else
+                    return new ResponseEntity<>("List row for item with id: " + id + " was notn ")
+            }
+        }
+    } else
+            return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
+
 
     private java.util.List<Map<String, String>> buildOutputMapList(java.util.List<ListRow> rowList) {
         return rowList.stream()
