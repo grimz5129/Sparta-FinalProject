@@ -1,7 +1,7 @@
 pipeline {
   environment {
     PROJECT_DIR = "/app"
-    CONTAINER_NAME = "finalproject"
+    CONTAINER_NAME = "finproject"
     DOCKER_ACCOUNT = "grimz5129"
     REGISTRY = "$DOCKER_ACCOUNT" + "/" + "$CONTAINER_NAME"
     IMAGE_NAME = "$REGISTRY" + ":" + "$BUILD_NUMBER"
