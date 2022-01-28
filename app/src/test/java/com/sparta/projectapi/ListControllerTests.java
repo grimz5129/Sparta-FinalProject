@@ -1,13 +1,12 @@
 package com.sparta.projectapi;
 
 import com.sparta.projectapi.requests.RequestFactory;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ListControllerTests {
     private String newListResponse;
     private String noAuthResponse;
@@ -15,14 +14,16 @@ public class ListControllerTests {
     private String viewListResponse;
 
     @Test
+    @Order(1)
     @DisplayName("POST check list create response")
     public void checkCreateListResponse() throws IOException, URISyntaxException, InterruptedException {
         String username = "Yefri51";
         newListResponse = RequestFactory.listRequest("/list/create/newlist",username, "BqwkosRkCpavC3cvgUpweXLsYHUWVC1pi1yP6zrn","POST","NewList.json");
-        Assertions.assertTrue(newListResponse.equals("Blank List Created for User: " + username + ". Please send items to the correct endpoint to add them."));
+        Assertions.assertTrue(newListResponse.equals("Blank List Created for User: " + username +". Please send items to list/create/newitems to add them."));
     }
 
     @Test
+    @Order(2)
     @DisplayName("POST no auth list response")
     public void checkNotAuthResponse() throws IOException, URISyntaxException, InterruptedException {
         String username = "Yefri51";
@@ -31,16 +32,17 @@ public class ListControllerTests {
     }
 
     @Test
+    @Order(3)
     @DisplayName("POST add item response")
     public void addItemToListResponse() throws IOException, URISyntaxException, InterruptedException {
         String username = "Yefri51";
         int id = 1;
         addItemResponse = RequestFactory.listRequest("/list/create/newitems/" + id, username, "BqwkosRkCpavC3cvgUpweXLsYHUWVC1pi1yP6zrn","POST","AddItemToList.json");
-        System.out.println(addItemResponse);
         Assertions.assertTrue(addItemResponse.equals("All items successfully added to the list. "));
     }
 
     @Test
+    @Order(4)
     @DisplayName("GET view login response")
     public void viewListResponse() throws IOException, URISyntaxException, InterruptedException {
         String username = "Yefri51";

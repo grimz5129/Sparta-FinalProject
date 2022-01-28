@@ -19,7 +19,7 @@ public class UserControllerTests {
     LoginRepository loginRepository;
 
     @Test
-    @DisplayName("POST valid user response")
+    @DisplayName("POST create valid user response")
     public void getUserCreateResponse() throws IOException, URISyntaxException, InterruptedException {
         createUserResponse = RequestFactory.postUser();
         Assertions.assertTrue(createUserResponse.equals("New User was created. Register a login before using the services"));
@@ -28,7 +28,6 @@ public class UserControllerTests {
     @Test
     @DisplayName("DELETE user valid response")
     public void deleteUserResponse() throws IOException, URISyntaxException, InterruptedException {
-        //This works and is ready for live demo
         deleteUserResponse = RequestFactory.deleteUser(2, "Mark98","8pAmZJ5hFskXq2IMyURdHxWGBCTe8xtcYzyJD9Lx");
         Assertions.assertTrue(deleteUserResponse.equals("User and credentials have been deleted"));
     }
@@ -43,14 +42,14 @@ public class UserControllerTests {
     @Test
     @DisplayName("GET user valid response")
     public void getUserResponse() throws IOException, URISyntaxException, InterruptedException {
-        getUserResponse = RequestFactory.getUser(3);
-        Assertions.assertTrue(getUserResponse.equals("id=3, name='Ignas'"));
+        getUserResponse = RequestFactory.getUser(1);
+        Assertions.assertTrue(getUserResponse.equals("id=1, name='Yefri'"));
     }
 
     @Test
     @DisplayName("GET user invalid response")
     public void getUserErrorResponse() throws IOException, URISyntaxException, InterruptedException {
-        getUserResponse = RequestFactory.getUser(1);
+        getUserResponse = RequestFactory.getUser(6);
         Assertions.assertTrue(getUserResponse.equals("No user was found. Perhaps you entered the wrong id?"));
     }
 
