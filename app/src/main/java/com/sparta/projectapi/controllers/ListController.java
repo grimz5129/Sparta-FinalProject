@@ -40,9 +40,12 @@ public class ListController {
         String[] headerParts = usernameAndAuthToken.split(" ");
         if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
             Map<String, String> values = regexService.parseProperties(newListString);
-            List newList = new List(values.get("list_title"), values.get("list_description"), loginRepository.getByUsername(headerParts[1]).getUser());
-            listRepository.save(newList);
-            return new ResponseEntity<>("Blank List Created for User: " + headerParts[1] + ". Please send items to the correct endpoint to add them.", HttpStatus.CREATED);
+            if (values.containsKey("list_title") && values.containsKey("list_description")) {
+                List newList = new List(values.get("list_title"), values.get("list_description"), loginRepository.getByUsername(headerParts[1]).getUser());
+                listRepository.save(newList);
+                return new ResponseEntity<>("Blank List Created for User: " + headerParts[1] + ". Please send items to list/create/newitems to add them.", HttpStatus.CREATED);
+            } else
+                return new ResponseEntity<>("One or more of list_title and list_description were not present, please check your spelling and try again", HttpStatus.BAD_REQUEST);
         } else
             return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
     }
