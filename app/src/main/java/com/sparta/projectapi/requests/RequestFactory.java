@@ -1,8 +1,5 @@
 package com.sparta.projectapi.requests;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -13,16 +10,12 @@ import java.nio.file.Path;
 
 public class RequestFactory {
 
-    private static ObjectMapper mapper = new ObjectMapper();
     private static String jsonFilePath = "src/test/java/com/sparta/projectapi/json/";
 
-    private static HttpResponse<String> responseBuilder(String endpoint, Integer id, String username, String token, String requestType, String jsonEndPoint)
+    private static HttpResponse<String> responseBuilder(String endpoint, String username,String token, String requestType, String jsonEndPoint)
             throws IOException, InterruptedException, URISyntaxException {
-        StringBuilder url = new StringBuilder("http://localhost");
+        StringBuilder url = new StringBuilder("http://localhost:80");
         url.append(endpoint);
-        if (id != null) {
-            url.append("?id=" + id);
-        }
         HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .uri(new URI(url.toString()));
@@ -52,15 +45,33 @@ public class RequestFactory {
         return resp;
     }
 
-    private static String loginMapper(HttpResponse<String> resp) throws JsonProcessingException {
-        String map = mapper.readValue(resp.body(), String.class);
-        return map;
+    public static String postUser() throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/user/create", null, null, "POST",
+                "user.json");
+        return resp.body();
     }
 
-    public static String postLogin(String username, String token) throws IOException, InterruptedException, URISyntaxException {
-        HttpResponse<String> resp = responseBuilder("/login/check", null, username, token, "POST",
-                "user.json");
-        return loginMapper(resp);
+    public static String deleteUser(Integer id, String username, String token) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/user/delete/" + id, username, token, "DELETE",
+                null);
+        return resp.body();
     }
+
+    public static String getUser(Integer id) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/user/get/" + id, null, null, "GET",
+                null);
+        return resp.body();
+    }
+
+    public static String loginRequest (String endpoint, String type, String file) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder(endpoint, null, null, type, file);
+        return resp.body();
+    }
+
+    public static String listRequest (String endpoint, String username, String token,String type, String file) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder(endpoint, username, token, type, file);
+        return resp.body();
+    }
+
 
 }

@@ -1,0 +1,10 @@
+[
+  {
+    "item_name" : "Docker",
+    "item_type" : "Application"
+  },
+  {
+    "item_name" : "Ruby",
+    "item_type" : "Package"
+  }
+]
