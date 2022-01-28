@@ -53,7 +53,7 @@
     - name: Run docker container
       docker_container:
         name: appcontainer
-        image: "grimz5129/sakilarestapi2:latest"
+        image: "grimz5129/finalproject"
         published_ports:
           - "8080:8080"
         volumes:
