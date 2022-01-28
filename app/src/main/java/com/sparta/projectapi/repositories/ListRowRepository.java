@@ -9,4 +9,5 @@ public interface ListRowRepository extends JpaRepository<ListRow, Integer> {
     java.util.List<ListRow> getAllByList(List list);
     ListRow getByItem(Item item);
     boolean existsByItem(Item item);
+    boolean existsByItemAndList(Item item, List list);
 }
