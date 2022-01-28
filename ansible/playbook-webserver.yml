@@ -1,0 +1,62 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Updating the apt
+      apt: update_cache=yes
+
+    - name: Install aptitude
+      apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
+
+    - name: Install All Required Packages
+      apt: name={{ item }} state=latest update_cache=yes force_apt_get=yes
+      loop: ['apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Add a GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Updating the apt
+      apt: update_cache=yes
+
+
+    - name: Install All Required Packages
+      apt: name={{ item }} state=latest update_cache=yes force_apt_get=yes
+      loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+
+    - name: Installing Python Package for Docker
+      pip:
+        name: docker
+
+    - name: Adding the Current User to Docker group to allow docker running without sudo
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Copy a file to the destination
+      copy:
+        src: "{{ playbook_dir }}/../init-scripts/application.properties"
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: ubuntu
+        mode: 0744
+
+
+    - name: Run docker container
+      docker_container:
+        name: appcontainer
+        image: "grimz5129/sakilarestapi2:latest"
+        published_ports:
+          - "8080:8080"
+        volumes:
+          - "/home/ubuntu/application.properties:/application.properties"
+        state: started
+        container_default_behavior: compatibility

@@ -1,0 +1,42 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: latest
+        update_cache: true
+    - name: Start nginx service
+      service:
+        name: nginx
+        state: started
+
+    # - name: Adding the Current User to Nginx group to allow docker running without sudo
+    #   user:
+    #     name: ubuntu
+    #     groups: nginx
+    #     append: yes
+
+    - name: Copy a file to the destination
+      copy:
+        src: "{{ playbook_dir }}/../init-scripts/default"
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: ubuntu
+        mode: 0744
+
+    - name: Copy cert files to the destination
+      copy:
+        src: "{{ playbook_dir }}/../init-scripts/cert_files"
+        dest: /home/ubuntu
+        owner: ubuntu
+        group: ubuntu
+        mode: 0400
+
+    - name: Move default to nginx location
+      shell: mv /home/ubuntu/default /etc/nginx/sites-available/default
+
+    - name: Restarting nginx
+      shell: sudo systemctl restart nginx && echo ubuntu
