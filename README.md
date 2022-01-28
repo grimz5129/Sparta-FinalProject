@@ -1,6 +1,10 @@
 # Sparta-FinalProject
 This is the final Sparta project
 
+## Authentication
+
+Endpoints that require authentication are expecting the HTTP ```Authorization``` header to be included with the request. It should have the value ```Basic <username> <auth_token>``` where ```<username>``` is the username used for logging in the current user and ```<auth_token>``` is the corresponding 40 character alphanumeric access token for this account.
+
 ## Users
 
 There are two endpoints related to user management, with a base URL of ```/user```:
@@ -98,6 +102,7 @@ There are 5 endpoints with the base URL of ```/list```
           "item_type" : "Application"
       }
     ```
+    Supported values for ```item_type``` are ```"Application", "Package" and "Component"```
 - Parameters: URL Parameter of the id of the List that you are trying to add these items to.
 
 ### /view
