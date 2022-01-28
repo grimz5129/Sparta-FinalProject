@@ -1,12 +1,34 @@
 # Sparta-FinalProject
 
-This is the final Sparta project
+# This is the final Sparta project
 
-Key path for the infrastructure is done by adding it to the .ssh folder:
+## Project Objectives
 
-ssh-add ~/.ssh/cyber-10x-group4.pem
+A multi-user framework that would allow the users to create their own profiles and to add their apps/packages/components as items. The user should be able to:
+- Create to their profiles
+- Login to their profiles
+- Add/Delete/List the apps/packages/components
 
-systemctl status nginx (to check if nginx is actively running)
+App using Java, Maven and JUnit Testing
+
+Database using MySQL Db, passwords should be stored hashed
+
+Deployment through Terraform, Ansible, Jenkins
+
+Network
+- AWS Infrastructure
+- The framework is accessible through a Nginx server
+- The nginx server serve the content from the App Servers (3 Servers)
+- Users cannot use the app server directly (requests should be sent through the Nginx server)
+- DB, Apps, Bastion and Proxies should be isolated in their own subnets with Zero Trust model
+- Firewalls should be configured to provide the components with the least privileges
+- Route53 should be configured for all components
+
+Security
+Secure Login
+Encrypted Communication:
+User <==> Proxy
+
 
 ## Authentication
 
@@ -135,3 +157,20 @@ There are 5 endpoints with the base URL of ```/list```
       }
     ```
 - Parameters: URL Parameter of the id of the List that you are trying to delete these items from.
+
+## Built With
+- [Maven](https://maven.apache.org/) - Dependency Management
+
+## Authors
+
+- [Yefri Velasquez](https://github.com/grimz5129)
+
+- [Mark Burnitt](https://github.com/djfrigid)
+
+- [Ignas Serepka](https://github.com/Ignas75)
+
+- [Nikolaos Papadopoulos](https://github.com/Moodhunter34)
+
+- Hat tip to anyone whose code was used
+
+- Inspiration
