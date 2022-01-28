@@ -26,6 +26,15 @@ public class Login {
     @Column(name = "current_token", length = 40)
     private String currentToken;
 
+    public Login(User user, String username, String password) {
+        this.user = user;
+        this.username = username;
+        this.password = password;
+    }
+
+    public Login() {
+    }
+
     public String getCurrentToken() {
         return currentToken;
     }
@@ -64,15 +73,6 @@ public class Login {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Login(User user, String username, String password) {
-        this.user = user;
-        this.username = username;
-        this.password = password;
-    }
-
-    public Login() {
     }
 
 

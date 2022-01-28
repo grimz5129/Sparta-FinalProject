@@ -24,6 +24,15 @@ public class Item {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Item(String itemName, ItemType itemType, User user) {
+        this.itemName = itemName;
+        this.itemType = itemType;
+        this.user = user;
+    }
+
+    public Item() {
+    }
+
     public User getUser() {
         return user;
     }

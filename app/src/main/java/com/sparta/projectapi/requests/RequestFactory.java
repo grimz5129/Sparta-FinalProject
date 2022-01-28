@@ -2,7 +2,6 @@ package com.sparta.projectapi.requests;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.net.URI;
@@ -14,16 +13,12 @@ import java.nio.file.Path;
 
 public class RequestFactory {
 
-    private static ObjectMapper mapper = new ObjectMapper();
     private static String jsonFilePath = "src/test/java/com/sparta/projectapi/json/";
 
     private static HttpResponse<String> responseBuilder(String endpoint, String username,String token, String requestType, String jsonEndPoint)
             throws IOException, InterruptedException, URISyntaxException {
         StringBuilder url = new StringBuilder("http://localhost:80");
         url.append(endpoint);
-//        if (id != null) {
-//            url.append("?id="+id);
-//        }
         HttpRequest.Builder builder = HttpRequest
                 .newBuilder()
                 .uri(new URI(url.toString()));
@@ -33,7 +28,7 @@ public class RequestFactory {
         } else if (requestType.equals("POST")) {
             if (jsonEndPoint != null) {
                 builder = builder.POST(HttpRequest.BodyPublishers.ofFile(Path.of
-                        (jsonFilePath+jsonEndPoint)));
+                        (jsonFilePath + jsonEndPoint)));
             } else {
                 builder = builder.POST(HttpRequest.BodyPublishers.ofString(""));
             }
@@ -64,5 +59,22 @@ public class RequestFactory {
                 null);
         return resp.body();
     }
+
+    public static String getUser(Integer id) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder("/user/get/" + id, null, null, "GET",
+                null);
+        return resp.body();
+    }
+
+    public static String loginRequest (String endpoint, String type, String file) throws IOException, InterruptedException, URISyntaxException {
+        HttpResponse<String> resp = responseBuilder(endpoint, null, null, type, file);
+        return resp.body();
+    }
+
+//    public static String deleteLogin (String username, String token) throws IOException, InterruptedException, URISyntaxException {
+//        HttpResponse<String> resp = responseBuilder("/login/check", username, token, "DELETE", null);
+//        return resp.body();
+//    }
+
 
 }

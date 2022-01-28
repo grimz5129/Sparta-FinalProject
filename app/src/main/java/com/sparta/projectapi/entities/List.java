@@ -1,11 +1,14 @@
 package com.sparta.projectapi.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "lists", indexes = {
         @Index(name = "belongs_to_user", columnList = "belongs_to_user")
 })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class List {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +24,15 @@ public class List {
     @ManyToOne(optional = false)
     @JoinColumn(name = "belongs_to_user", nullable = false)
     private User belongsToUser;
+
+    public List(String listTitle, String listDescription, User belongsToUser) {
+        this.listTitle = listTitle;
+        this.listDescription = listDescription;
+        this.belongsToUser = belongsToUser;
+    }
+
+    public List() {
+    }
 
     public User getBelongsToUser() {
         return belongsToUser;
@@ -52,5 +64,15 @@ public class List {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "List{" +
+                "id=" + id +
+                ", listTitle='" + listTitle + '\'' +
+                ", listDescription='" + listDescription + '\'' +
+                ", belongsToUser=" + belongsToUser +
+                '}';
     }
 }

@@ -1,0 +1,14 @@
+upstream userpackages_servers {
+	server www.group4.cyber:8080 ;
+}
+server {
+	listen 443 ssl;
+	server_name _;
+	location / {
+		proxy_set_header Host $host;
+		proxy_pass http://userpackages_servers;
+	}
+
+	ssl_certificate /home/ubuntu/cert_files/cert.pem ;
+	ssl_certificate_key /home/ubuntu/cert_files/key.pem ;
+}
