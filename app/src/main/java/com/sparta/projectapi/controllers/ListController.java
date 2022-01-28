@@ -54,40 +54,50 @@ public class ListController {
     public ResponseEntity<String> createNewListItems(@RequestBody String itemsToAdd, @RequestHeader("Authorization") String usernameAndAuthToken, @PathVariable int id) {
         String[] headerParts = usernameAndAuthToken.split(" ");
         String[] itemList = itemsToAdd.split("},");
-        if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
-            java.util.List<Item> itemObjects = new ArrayList<>(itemList.length);
-            for (String item : itemList) {
-                Map<String, String> values = regexService.parseProperties(item);
-                if (itemTypeRepository.existsByTypeName(values.get("item_type"))) {
-                    // I tried a constructor. It had random null references. This works. I have no idea why.
-                    Item newItem = new Item();
-                    newItem.setItemName(values.get("item_name"));
-                    newItem.setItemType(itemTypeRepository.getByTypeName(values.get("item_type")));
-                    itemObjects.add(newItem);
-                } else return new ResponseEntity<>("One or more items have invalid types", HttpStatus.BAD_REQUEST);
-            }
-            java.util.List<Item> newItems = new ArrayList<>();
-            java.util.List<Item> itemObjectsForRows = new ArrayList<>();
-            for (Item item: itemObjects){
-                if (!itemRepository.existsByItemName(item.getItemName())){
-                    newItems.add(item);
-                    itemObjectsForRows.add(item);
-                } else {
-                    itemObjectsForRows.add(itemRepository.getByItemName(item.getItemName()));
+        if (itemList.length > 0){
+            if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
+                java.util.List<Item> itemObjects = new ArrayList<>(itemList.length);
+                for (String item : itemList) {
+                    Map<String, String> values = regexService.parseProperties(item);
+                    if (values.containsKey("item_type") && values.containsKey("item_name")) {
+                        if (itemTypeRepository.existsByTypeName(values.get("item_type"))) {
+                            // I tried a constructor. It had random null references. This works. I have no idea why.
+                            Item newItem = new Item();
+                            newItem.setItemName(values.get("item_name"));
+                            newItem.setItemType(itemTypeRepository.getByTypeName(values.get("item_type")));
+                            itemObjects.add(newItem);
+                        } else
+                            return new ResponseEntity<>("One or more items have invalid types", HttpStatus.BAD_REQUEST);
+                    } else
+                        return new ResponseEntity<>("One or more of item_type and item_name were not present in the body for an item. Check the body and try again", HttpStatus.BAD_REQUEST);
                 }
-            }
-            if (newItems.size() > 0) {
-                itemRepository.saveAll(newItems);
-            }
-            java.util.List<ListRow> listRows = new ArrayList<>(itemObjects.size());
-            List addingToList = listRepository.getById(id);
-            for (Item item : itemObjectsForRows) {
-                listRows.add(new ListRow(addingToList, item));
-            }
-            listRowRepository.saveAll(listRows);
-            return new ResponseEntity<>("All items successfully added to the list. ", HttpStatus.ACCEPTED);
+                java.util.List<Item> newItems = new ArrayList<>();
+                java.util.List<Item> itemObjectsForRows = new ArrayList<>();
+                for (Item item: itemObjects){
+                    if (!itemRepository.existsByItemName(item.getItemName())){
+                        newItems.add(item);
+                        itemObjectsForRows.add(item);
+                    } else {
+                        itemObjectsForRows.add(itemRepository.getByItemName(item.getItemName()));
+                    }
+                }
+                if (newItems.size() > 0) {
+                    itemRepository.saveAll(newItems);
+                }
+                java.util.List<ListRow> listRows = new ArrayList<>(itemObjects.size());
+                List addingToList = listRepository.getById(id);
+                for (Item item : itemObjectsForRows) {
+                    if (listRowRepository.existsByItemAndList(item, addingToList)){
+                        return new ResponseEntity<>("Item with name: " + item.getItemName() + " is already in your list. Remove it from your request and try again.", HttpStatus.BAD_REQUEST);
+                    }
+                    listRows.add(new ListRow(addingToList, item));
+                }
+                listRowRepository.saveAll(listRows);
+                return new ResponseEntity<>("All items successfully added to the list. ", HttpStatus.ACCEPTED);
+            } else
+                return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
         } else
-            return new ResponseEntity<>("You are not authorized for this page, Check your username or token and try again.", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Body contained no content that could be recognized", HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping("/list/view/{id}")
@@ -96,7 +106,7 @@ public class ListController {
         if (authorizationService.checkValidToken(headerParts[1], headerParts[2])) {
             if (listRepository.existsById(id)) {
                 java.util.List<ListRow> rowsOfList = listRowRepository.getAllByList(listRepository.getById(id));
-                return new ResponseEntity<>(buildOutputMapList(rowsOfList), HttpStatus.I_AM_A_TEAPOT);
+                return new ResponseEntity<>(buildOutputMapList(rowsOfList), HttpStatus.OK);
             } else
                 return new ResponseEntity<>("The ID you supplied was not found. Please check the ID and try again", HttpStatus.NOT_FOUND);
         } else
