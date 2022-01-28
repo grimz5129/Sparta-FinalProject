@@ -60,7 +60,7 @@ SELECT * FROM logins;
 SELECT * FROM users;
 
 
-INSERT INTO users VALUES
+INSERT INTO users (name) VALUES
 ("Yefri"),
 ("Mark"),
 ("Nikos"),
