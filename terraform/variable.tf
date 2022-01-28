@@ -7,7 +7,7 @@ variable "var_ami_linux_ubuntu_tf" {
 }
 
 variable "var_ami_linux_ubuntu_database_tf" {
-  default = "ami-0875e114ea83baf03"
+  default = "ami-0e29d3b2de3e3afd5"
 }
 
 variable "var_private_key_location_tf" {
